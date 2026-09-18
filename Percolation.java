@@ -10,14 +10,17 @@ public class Percolation {
         }
         this.n = n;
         this.grid = new boolean[n][n];
-        this.weightedQuickUnionUF = new WeightedQuickUnionUF(n * n);
+        this.weightedQuickUnionUF = new WeightedQuickUnionUF(n * n + 2);
     }
     public void open(int row, int col){
         if(row > n - 1 || col > n - 1 || col <= 0 || row <= 0){
             throw new IllegalArgumentException("Error! Index outside its prescribed range [1,n-1]!");
         }
         grid[row][col] = true;
-        if(grid[row - 1][col - 1]){
+        if(row == 1){
+            weightedQuickUnionUF.union(0,(col));
+        }
+        if(row == n){
 
         }
     }
