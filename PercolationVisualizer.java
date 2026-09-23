@@ -140,7 +140,7 @@ public class PercolationVisualizer {
         // TODO 1: Declare a Percolation field to replace grid[][].
         //         Add this line:  private Percolation percolation;
         //         Then delete the grid[][] declaration below.
-        private int[][] grid;
+        private Percolation percolation;
 
         private final JLabel statusBar;
         private final Random rng = new Random();
@@ -150,7 +150,7 @@ public class PercolationVisualizer {
             this.statusBar = statusBar;
             // TODO 2: Initialize your Percolation object instead of grid[][].
             //         Replace the line below with:  this.percolation = new Percolation(n);
-            this.grid = new int[n][n];
+            percolation = new Percolation(n);
             setBackground(COLOR_BG);
             setPreferredSize(new Dimension(560, 560));
             updateStatus();
@@ -174,7 +174,7 @@ public class PercolationVisualizer {
                     // TODO 3: Open the clicked site using your Percolation object.
                     //         The GUI uses 0-based row/col; Percolation uses 1-based.
                     //         Replace the line below with:  percolation.open(row + 1, col + 1);
-                    grid[row][col] = (grid[row][col] + 1) % 3;
+                    percolation.open(row + 1, col + 1);
 
                     updateStatus();
                     repaint();
@@ -188,7 +188,7 @@ public class PercolationVisualizer {
                 for (int col = 0; col < n; col++) {
                     // TODO 4: Use percolation.isOpen() to find blocked cells.
                     //         Replace the condition below with:  if (!percolation.isOpen(row + 1, col + 1))
-                    if (grid[row][col] == 0) {
+                    if (!percolation.isOpen(row + 1, col + 1)) {
                         blockedCells.add(new int[]{row, col});
                     }
                 }
@@ -202,7 +202,7 @@ public class PercolationVisualizer {
             int col = cell[1];
             // TODO 5: Open the randomly chosen site using your Percolation object.
             //         Replace the line below with:  percolation.open(row + 1, col + 1);
-            grid[row][col] = 1;
+            percolation.open(row + 1, col + 1);
             updateStatus();
             repaint();
         }
@@ -211,7 +211,7 @@ public class PercolationVisualizer {
             n = newN;
             // TODO 6: Create a fresh Percolation object when the grid resets.
             //         Replace the line below with:  percolation = new Percolation(newN);
-            grid = new int[newN][newN];
+            percolation = new Percolation(newN);
             updateStatus();
             repaint();
         }
@@ -225,17 +225,17 @@ public class PercolationVisualizer {
             //      else show: "Open sites: X / total  (P%)  |  Grid: n×n"
             //   Use String.format() with %.1f%% for the percentage.
             //   Delete the manual counting loop below and replace with the above.
-            int openCount = 0;
-            int fullCount = 0;
-            for (int row = 0; row < n; row++) {
-                for (int col = 0; col < n; col++) {
-                    if (grid[row][col] == 1) openCount++;
-                    else if (grid[row][col] == 2) fullCount++;
-                }
+            int openCount = percolation.numberOfOpenSites();
+            int total = n * n;
+            double pct = openCount * 100.0 / total;
+            if(percolation.percolates()){
+                statusBar.setText("System percolates! Open sites: " + openCount + "| Total: " + pct + "%");
             }
-            statusBar.setText("Open sites: " + openCount
-                    + " | Full sites: " + fullCount
-                    + " | Grid: " + n + "×" + n);
+            else {
+                statusBar.setText("Open sites: " + openCount
+                        + " | Total: " + pct
+                        + " | Grid: " + n + "×" + n);
+            }
         }
 
         @Override
@@ -258,10 +258,10 @@ public class PercolationVisualizer {
                     //            else if (percolation.isOpen(row + 1, col + 1))  cellColor = COLOR_OPEN;
                     //            else                                             cellColor = COLOR_BLOCKED;
                     Color cellColor;
-                    if (grid[row][col] == 1) {
-                        cellColor = COLOR_OPEN;
-                    } else if (grid[row][col] == 2) {
+                    if (percolation.isFull(row + 1, col + 1)) {
                         cellColor = COLOR_FULL;
+                    } else if (percolation.isOpen(row + 1, col + 1)) {
+                        cellColor = COLOR_OPEN;
                     } else {
                         cellColor = COLOR_BLOCKED;
                     }
@@ -272,6 +272,11 @@ public class PercolationVisualizer {
                     g.fillRect(x, y, cellSize, cellSize);
                     g.setColor(COLOR_BORDER);
                     g.drawRect(x, y, cellSize - 1, cellSize - 1);
+                }
+                if(percolation.percolates()){
+                    g.setColor(new Color(0x22c55e));
+                    g.drawRect(left, top, gridWidth - 1, gridHeight - 1);
+                    g.drawRect(left + 1, top + 1, gridWidth - 3, gridHeight - 3);
                 }
             }
 

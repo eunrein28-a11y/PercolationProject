@@ -1,36 +1,41 @@
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class PercolationStats {
     private int n;
     private int trials;
+    private double mean, stddev;
 public PercolationStats(int n, int trials){
+    if(n <= 0 || trials <= 0){
+        throw new IllegalArgumentException("Error! n and trials must be greater than zero!");
+    }
     this.n = n;
     this.trials = trials;
-}
-public double mean(){
-    double count = 0;
+    double[] tests = new double[trials];
     for(int i = 0; i < trials; i++){
-        int c = 0;
         Percolation p = new Percolation(n);
         while(!p.percolates()){
-            p.open((int) (Math.random() * n) + 1, (int) (Math.random() * n) + 1);
-            c++;
+            p.open((int) (StdRandom.uniformDouble() * n) + 1, (int) (StdRandom.uniformDouble() * n) + 1);
         }
-        count += c;
+        tests[i] = (double) p.numberOfOpenSites() / (n * n);
     }
-    return (count / (n * n)) / trials;
+    this.mean = StdStats.mean(tests);
+    this.stddev = StdStats.stddev(tests);
+}
+public double mean(){
+    return mean;
 }
 public double stddev(){
-    return 0.0;
+    return stddev;
 }
 public double confidenceLo(){
-    return 0.0;
+    return mean - 1.96 * stddev/Math.sqrt(trials);
 }
 public double confidenceHi(){
-    return 0.0;
+    return mean + 1.96 * stddev/ Math.sqrt(trials);
 }
 
     public static void main(String[] args) {

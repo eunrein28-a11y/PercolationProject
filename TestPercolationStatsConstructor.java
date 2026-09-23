@@ -10,7 +10,7 @@ public class TestPercolationStatsConstructor {
     }
 
     public static void main(String[] args) {
-        /*
+
         System.out.println("--- valid constructor arguments ---");
         boolean oneByOneValid = true;
         try {
@@ -77,6 +77,6 @@ public class TestPercolationStatsConstructor {
         }
         check("n=-1, trials=-1 throws IllegalArgumentException", bothNegativeThrows);
 
-         */
+
     }
 }
