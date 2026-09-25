@@ -27,20 +27,13 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 public class PercolationVisualizer {
     static final Color COLOR_BLOCKED = new Color(0x2d2d2d);
@@ -48,6 +41,8 @@ public class PercolationVisualizer {
     static final Color COLOR_FULL    = new Color(0x3B82F6);
     static final Color COLOR_BORDER  = new Color(0x1a1a2e);
     static final Color COLOR_BG      = new Color(0x1e1e2e);
+
+    public static Timer t;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -68,7 +63,7 @@ public class PercolationVisualizer {
             sizeLabel.setForeground(Color.WHITE);
             sizeLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
 
-            JSpinner sizeSpinner = new JSpinner(new SpinnerNumberModel(10, 2, 30, 1));
+            JSpinner sizeSpinner = new JSpinner(new SpinnerNumberModel(10, 2, /*30*/100, 1));
             sizeSpinner.setPreferredSize(new Dimension(70, 28));
 
             JButton newGridButton = new JButton("New Grid");
@@ -228,10 +223,9 @@ public class PercolationVisualizer {
             int openCount = percolation.numberOfOpenSites();
             int total = n * n;
             double pct = openCount * 100.0 / total;
-            if(percolation.percolates()){
+            if (percolation.percolates()) {
                 statusBar.setText("System percolates! Open sites: " + openCount + "| Total: " + pct + "%");
-            }
-            else {
+            } else {
                 statusBar.setText("Open sites: " + openCount
                         + " | Total: " + pct
                         + " | Grid: " + n + "×" + n);
@@ -273,7 +267,7 @@ public class PercolationVisualizer {
                     g.setColor(COLOR_BORDER);
                     g.drawRect(x, y, cellSize - 1, cellSize - 1);
                 }
-                if(percolation.percolates()){
+                if (percolation.percolates()) {
                     g.setColor(new Color(0x22c55e));
                     g.drawRect(left, top, gridWidth - 1, gridHeight - 1);
                     g.drawRect(left + 1, top + 1, gridWidth - 3, gridHeight - 3);
